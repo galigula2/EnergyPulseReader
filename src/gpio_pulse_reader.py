@@ -38,7 +38,7 @@ def startMonitoringPulses(callback: Callable[[int, float], None], reportingPerio
         # Start listening
         GPIO.add_event_detect(rpiBcmPin, GPIO.RISING, callback=pulseCounterInterrupt, bouncetime=bounceMilliseconds)  # add rising edge detection on a channel (with small bounce to not register flashes twice)
 
-        print(f"Start monitring pin 'GPIO{rpiBcmPin}' on {reportingPeriodSeconds}s refresh rate with {bounceMilliseconds}ms bouncetime")
+        print(f"Start monitoring pin 'GPIO{rpiBcmPin}' on {reportingPeriodSeconds}s refresh rate with {bounceMilliseconds}ms bouncetime")
         while True:
             # Sleep for interval (note: this is not accurate since all the steps in while after this should reduce the sleep amount, not sure how relevant this is)
             time.sleep(reportingPeriodSeconds)
