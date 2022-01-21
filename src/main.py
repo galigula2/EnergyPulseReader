@@ -2,22 +2,20 @@ from gpio_pulse_reader import startMonitoringPulses
 from influx_writer import InfluxWriter
 from pulse_accumulator import PulseAccumulator
 import time
+import configparser
 
-# Pulse reader settings
-BCM_CHANNEL = 24
-RECORDING_INTERVAL_SECONDS = 5.0
-PULSES_PER_KWH = 10000
-BOUNCE_MS = 5 # 3ms seems to be just working for me, 2ms was too little, more in theory is a bit safer but loses pulses on higher consuption
-              # 5ms bounce would mean maximum of 200 pulses per second -~> 71 kW consuption, it should never get that high in the house
-
-# Measurement settings
-MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES = 1
-
-# InfluxDB settings
-INFLUXDB_URL="http://localhost:8086"
-INFLUXDB_ORG="Talonvalvonta"
-INFLUXDB_BUCKET = "testi"
-INFLUXDB_TOKEN="29yLn5IdQN3qTE0EwZhTZ_LKInnQyZpDsFzRp_i4JdNCBXCRqpHS_2pnTDvXRprdwY__X5uvem5dtk3OgLcxlA==" # Test token, will be removed later
+# Read configuration file
+config = configparser.ConfigParser()
+config.read('../energypulsereader.ini')
+BCM_CHANNEL = config.getint("PulseReader", "BCM_CHANNEL")
+RECORDING_INTERVAL_SECONDS = config.getfloat("PulseReader", "RECORDING_INTERVAL_SECONDS")
+PULSES_PER_KWH = config.getint("PulseReader", "PULSES_PER_KWH")
+BOUNCE_MS = config.getint("PulseReader", "BOUNCE_MS")
+MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES = config.getint("Measurements", "MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES")
+INFLUXDB_URL=config.get("InfluxDB", "URL")
+INFLUXDB_ORG=config.get("InfluxDB", "ORG")
+INFLUXDB_BUCKET = config.get("InfluxDB", "BUCKET")
+INFLUXDB_TOKEN=config.get("InfluxDB", "TOKEN")
 
 # Helpers
 SECONDS_PER_HOUR = 60*60
