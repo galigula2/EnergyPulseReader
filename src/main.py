@@ -1,7 +1,6 @@
 from gpio_pulse_reader import startMonitoringPulses
-from influx_writer import InfluxWriter
+from influx_writer import writeToInfluxAsync
 from pulse_accumulator import PulseAccumulator
-import time
 import configparser
 
 # Read configuration file
@@ -20,10 +19,6 @@ INFLUXDB_TOKEN=config.get("InfluxDB", "TOKEN")
 # Helpers
 SECONDS_PER_HOUR = 60*60
 
-# Connect to influxdb for long term storage
-influx = InfluxWriter(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN)
-influx.connect()
-
 # Prepare accumulator to count pulses towards accumulation period  
 pulseAccumulator = PulseAccumulator(60 * MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES)
 
@@ -33,7 +28,7 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
     global pulseAccumulator
     accPeriodEndedWithPulseCount = pulseAccumulator.accumulate(pulseCount)
 
-    # Calculate current power and send it directly to visualization
+    # Calculate current power and send it directly to visualization through MQTT
     power = SECONDS_PER_HOUR / (pulseIntervalSeconds * PULSES_PER_KWH)
     print(f"Power: {power:0.1f} kW     Pulses: {pulseCount}    PulseInterval: {int(pulseIntervalSeconds*1000)}ms")
       
@@ -44,11 +39,10 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
         print(f"Total: {totalEnergyInAccumulationPeriod:0.3f} kWh spent in last {MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES} minutes") 
 
         # Write to long term storage
-        global influx
-        influx.writeAsync(INFLUXDB_BUCKET, {
-            "measurement": "testimittaus2",
+        writeToInfluxAsync(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN, INFLUXDB_BUCKET, {
+            "measurement": "electricity",
             "fields": {
-                f"electricityTotal_{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_Wh": int(totalEnergyInAccumulationPeriod * 1000) 
+                f"consumption_{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_Wh": int(totalEnergyInAccumulationPeriod * 1000) 
             }
         })
 
