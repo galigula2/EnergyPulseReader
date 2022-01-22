@@ -29,6 +29,11 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
     accPeriodEndedWithPulseCount = pulseAccumulator.accumulate(pulseCount)
 
     # Calculate current power and send it directly to visualization through MQTT
+    #{
+    #   "value1": 1.0,
+    #   "value2": 2,
+    #   "value3": 3.33,
+    #}
     power = SECONDS_PER_HOUR / (pulseIntervalSeconds * PULSES_PER_KWH)
     print(f"Power: {power:0.1f} kW     Pulses: {pulseCount}    PulseInterval: {int(pulseIntervalSeconds*1000)}ms")
       
