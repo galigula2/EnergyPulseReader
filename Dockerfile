@@ -1,9 +1,6 @@
-FROM balenalib/raspberry-pi-debian-python:3.7.4-run AS build
+FROM balenalib/raspberry-pi-alpine-python:3.7.4-3.9-build as build
 
 WORKDIR /pulsereader
-
-# Install build-requirements so that pip3 requirent installation works
-RUN install_packages build-essential
 
 # Install python requirements (to /pulsereader/reqs for multi stage build)
 COPY ./src/requirements.txt requirements.txt
@@ -14,7 +11,7 @@ COPY ./src src
 # We don't copy a pulse reader ini file to the container, it needs to be mounted. See README.md for details
 
 # Do a multi-stage build to reduce final image size (by dropping all the build stuff)
-FROM balenalib/raspberry-pi-debian-python:3.7.4-run
+FROM balenalib/raspberry-pi-alpine-python:3.7.4-3.9-run
 WORKDIR /pulsereader
 COPY --from=build /pulsereader .
 ENV PYTHONPATH "${PYTHONPATH}:/pulsereader/reqs"
