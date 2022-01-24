@@ -49,9 +49,9 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
 
         # Write to long term storage
         writeToInfluxAsync(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN, INFLUXDB_BUCKET, {
-            "measurement": "consuption",
+            "measurement": "consumption",
             "fields": {
-                f"electricity{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_Wh": int(totalEnergyInAccumulationPeriod * 1000) 
+                f"electricity_{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_kWh": totalEnergyInAccumulationPeriod
             }
         })
 
