@@ -3,7 +3,6 @@
 Python code for an application reading pulses from Raspberry Pi digital input signals and forwarding calculated energy consumptions to InfluxDB.
 
 TODO: Push instant power to grafana through MQTT
-TODO: Dockerfile from here https://github.com/ivyleavedtoadflax/elec ?`
 TODO: below
 
 
@@ -33,4 +32,7 @@ TODO
 
 ### Docker
 
-TODO
+Need to be run with --privileged because we need access to GPIO memory sections
+
+You need to mount the ini-file as /pulsereader/energypulsereader.ini when running the container!
+

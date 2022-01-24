@@ -2,10 +2,14 @@ from gpio_pulse_reader import startMonitoringPulses
 from influx_writer import writeToInfluxAsync
 from pulse_accumulator import PulseAccumulator
 import configparser
+from os import path
 
 # Read configuration file
+CONFIG_FILE="energypulsereader.ini"
+if (not path.exists(CONFIG_FILE)):
+    raise Exception("Configuration file '{}' not found!".format(CONFIG_FILE))
 config = configparser.ConfigParser()
-config.read('../energypulsereader.ini')
+config.read(CONFIG_FILE)
 BCM_CHANNEL = config.getint("PulseReader", "BCM_CHANNEL")
 RECORDING_INTERVAL_SECONDS = config.getfloat("PulseReader", "RECORDING_INTERVAL_SECONDS")
 PULSES_PER_KWH = config.getint("PulseReader", "PULSES_PER_KWH")
@@ -45,9 +49,9 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
 
         # Write to long term storage
         writeToInfluxAsync(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_TOKEN, INFLUXDB_BUCKET, {
-            "measurement": "electricity",
+            "measurement": "consuption",
             "fields": {
-                f"consumption_{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_Wh": int(totalEnergyInAccumulationPeriod * 1000) 
+                f"electricity{MEAS_ACCUMULATED_ENERGY_REPORTING_INTERVAL_MINUTES}min_Wh": int(totalEnergyInAccumulationPeriod * 1000) 
             }
         })
 

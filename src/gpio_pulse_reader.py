@@ -3,7 +3,7 @@
 
 import RPi.GPIO as GPIO
 import time
-from collections.abc import Callable
+from typing import Callable
 
 def startMonitoringPulses(callback: Callable[[int, float], None], reportingPeriodSeconds: float, rpiBcmPin: int, bounceMilliseconds: int):
     """Starts listening to pulses in given Raspberry Pi input channel
