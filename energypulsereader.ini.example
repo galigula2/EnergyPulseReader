@@ -8,7 +8,7 @@ PULSES_PER_KWH = 10000
 
 # 3ms seems to be just working for me, 2ms was too little, more in theory is a bit safer but loses pulses on higher consuption
 # 5ms bounce would mean maximum of 200 pulses per second -~> 71 kW consuption, it should never get that high in the house
-BOUNCE_MS = 5               
+BOUNCE_MS = 5
 
 # Measurement settings
 [Measurements]
@@ -20,3 +20,7 @@ URL=<Where InfluxDB can be found>
 ORG=<What Organization to write to>
 BUCKET=<What bucket to write to>
 TOKEN=<Token that allows writing to Org/Bucket above>
+
+[MQTT]
+URL=<Where MQTT Broker Resides>
+TOPIC=<Topic where to send the data>

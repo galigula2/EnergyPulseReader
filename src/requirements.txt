@@ -1,3 +1,4 @@
 RPi.GPIO==0.7.0
 influxdb-client==1.25.0
 configparser==5.2.0
+paho-mqtt==1.6.1

@@ -32,6 +32,8 @@ TODO
 
 ### Docker
 
+Build image with `docker build -t energy-pulse-reader .`
+
 Need to be run with --privileged because we need access to GPIO memory sections
 
 You need to mount the ini-file as /pulsereader/energypulsereader.ini when running the container!

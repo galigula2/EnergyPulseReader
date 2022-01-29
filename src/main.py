@@ -1,5 +1,6 @@
 from gpio_pulse_reader import startMonitoringPulses
 from influx_writer import writeToInfluxAsync
+from mqtt_writer import writeToMQTTAsync
 from pulse_accumulator import PulseAccumulator
 import configparser
 from os import path
@@ -19,6 +20,8 @@ INFLUXDB_URL=config.get("InfluxDB", "URL")
 INFLUXDB_ORG=config.get("InfluxDB", "ORG")
 INFLUXDB_BUCKET = config.get("InfluxDB", "BUCKET")
 INFLUXDB_TOKEN=config.get("InfluxDB", "TOKEN")
+MQTT_URL=config.get("MQTT", "URL")
+MQTT_TOPIC=config.get("MQTT", "TOPIC")
 
 # Helpers
 SECONDS_PER_HOUR = 60*60
@@ -33,14 +36,11 @@ def reportUsage(pulseCount: int, pulseIntervalSeconds: float):
     accPeriodEndedWithPulseCount = pulseAccumulator.accumulate(pulseCount)
 
     # Calculate current power and send it directly to visualization through MQTT
-    #{
-    #   "value1": 1.0,
-    #   "value2": 2,
-    #   "value3": 3.33,
-    #}
     power = SECONDS_PER_HOUR / (pulseIntervalSeconds * PULSES_PER_KWH)
     print(f"Power: {power:0.1f} kW     Pulses: {pulseCount}    PulseInterval: {int(pulseIntervalSeconds*1000)}ms")
-      
+    realtimePayload = f"{{ \"electricityPowerkW\": {power} }}"
+    writeToMQTTAsync(MQTT_URL, MQTT_TOPIC, realtimePayload)
+
     # If the accumulation period has ended store energy consumpton to long term database
     if accPeriodEndedWithPulseCount is not None:
         # Report details
