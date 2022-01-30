@@ -21,6 +21,7 @@ ORG=<What Organization to write to>
 BUCKET=<What bucket to write to>
 TOKEN=<Token that allows writing to Org/Bucket above>
 
+# MQTT Settings
 [MQTT]
 URL=<Where MQTT Broker Resides>
 TOPIC=<Topic where to send the data>
